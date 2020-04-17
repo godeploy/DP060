@@ -1,6 +1,6 @@
-### Lab 2: Migrate MongDB Workloads to Cosmos DB
+### Lab 2: Migrate MongoDB Workloads to Cosmos DB
 
-- [Lab 2: Migrate MongDB Workloads to Cosmos DB](#lab-2-migrate-mongdb-workloads-to-cosmos-db)
+- [Lab 2: Migrate MongoDB Workloads to Cosmos DB](#lab-2-migrate-mongodb-workloads-to-cosmos-db)
   - [Exercise 1: Setup](#exercise-1-setup)
     - [Task 1: Create a Resource Group and Virtual Network](#task-1-create-a-resource-group-and-virtual-network)
     - [Task 2: Create a MongoDB Database Server](#task-2-create-a-mongodb-database-server)
@@ -18,7 +18,7 @@
     - [Task 2: Reconfigure the DeviceDataQuery Application](#task-2-reconfigure-the-devicedataquery-application)
   - [Exercise 5: Clean Up](#exercise-5-clean-up)
 
-### Lab 2: Migrate MongDB Workloads to Cosmos DB
+### Lab 2: Migrate MongoDB Workloads to Cosmos DB
 
 @@@secondary
 In this lab, you'll take an existing MongoDB database and migrate it to Cosmos DB. You'll use the Azure Database Migration Service. You'll also see how to reconfigure existing applications that use the MongoDB database to connect to the Cosmos DB database instead.
@@ -54,7 +54,7 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Subnet Name | default |
     | Subnet Address range | 10.0.0.0/28 |
     | DDos protection | Basic |
-    | Service endpoints | Disabled |
+    | Service endpoints | 0 Selected |
     | Firewall | Disabled |
 
 9. [ ] Wait for the virtual network to be created before continuing.
@@ -81,7 +81,7 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Confirm password | Pa55w.rdPa55w.rd |
 
 5. [ ] On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
-6. [ ] On the **Networking** page, enter the following details, and then click **Next: Management \>**.
+6. [ ] On the **Networking** page, confirm (or enter) the following details, and then click **Next: Management \>**.
 
     | Property  | Value  |
     |---|---|
@@ -89,7 +89,7 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Subnet | default (10.0.0.0/28) |
     | Public IP | (new) mongodbserver-ip |
     | NIC network security group | Advanced |
-    ! Configure network security group | (new) mongodbserver-nsg |
+    | Configure network security group | (new) mongodbserver-nsg |
     | Accelerated networking | Off |
     | Load balancing | No |
 
@@ -122,8 +122,8 @@ In the first exercise, you'll create the MongoDB database for holding the data c
 2. [ ] On the **All resources** page, click **mongodbserver-ip**.
 3. [ ] On the **mongodbserver-ip** page, make a note of the **IP address**.
 4. [ ] In the toolbar at the top of the Azure portal, click **Cloud Shell**.
-5. [ ] If the **You have no storage mounted** message box appears, click **Create storage**.
-6. [ ] When the Cloud Shell starts, in the drop-down list above the Cloud Shell window, select **Bash**.
+5. [ ] When the Cloud Shell starts, in the drop-down list above the Cloud Shell window, select **Bash**.
+6. [ ] If the **You have no storage mounted** message box appears, click **Create storage**, using Advanced {if needed} to specify the storage and fileshare names.
 7. [ ] In the Cloud Shell, enter the following command to connect to the mongodbserver virtual machine. Replace *\<ip address\>* with the value of the **mongodbserver-ip** IP address:
 
     ```bash
@@ -307,9 +307,13 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Subscription | Select your subscription |
     | Resource group | mongodbrg |
     | Account Name | mongodb*nnn*, where *nnn* is a random number selected by you |
-    | API | Azure Cosmos DB for MongoDB API |
     | Location | Specify the same location that you used for the MongoDB server and virtual network |
+    | API | Azure Cosmos DB for MongoDB API |
+    | Version (Choose latest) |
+    | Apply Free Tier (Do Not Apply) |
+    | Non-Production |
     | Geo-Redundancy | Disable |
+    | Availability Zone | Disable |
     | Multi-region Writes | Disable |
 
 6. [ ] On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
@@ -493,17 +497,17 @@ The final step is to reconfigure your existing MongoDB applications to connect t
             <add key="Collection" value="Temperatures" />
 
             <!-- Settings for MongoDB -->
-            <!--add key="Address" value="168.63.99.236" />
+            <!--add key="Address" value="<ip-address>" />
             <add key="Port" value="27017" />
             <add key="Username" value="deviceadmin" />
             <add key="Password" value="Pa55w.rd" /-->
             <!-- End of settings for MongoDB -->
 
             <!-- Settings for CosmosDB Mongo API -->
-            <add key="Address" value="mongodbnnn.documents.azure.com"/>
+            <add key="Address" value="<your-mongodbnnn>.documents.azure.com"/>
             <add key="Port" value="10255"/>
-            <add key="Username" value="mongodbnnn"/>
-            <add key="Password" value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=="/>
+            <add key="Username" value="<your-mongodbnnn>"/>
+            <add key="Password" value="<Primary-Password>"/>
             <!-- End of settings for CosmosDB Mongo API -->
         </appSettings>
     </configuration>
